@@ -1,1 +1,9 @@
+com\internship\tool\entity\ComplianceRecord$ComplianceRecordBuilder.class
+com\internship\tool\entity\ComplianceRecord.class
+com\internship\tool\entity\AuditLog.class
+com\internship\tool\entity\AuditLog$AuditLogBuilder.class
 com\internship\tool\ToolApplication.class
+com\internship\tool\entity\ComplianceRecord$ComplianceStatus.class
+com\internship\tool\entity\ComplianceRecord$Priority.class
+com\internship\tool\repository\ComplianceRecordRepository.class
+com\internship\tool\repository\AuditLogRepository.class
