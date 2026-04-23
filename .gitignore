@@ -1,0 +1,20 @@
+# Secrets
+.env
+
+# Java build
+backend/target/
+
+# Node modules
+frontend/node_modules/
+
+# Python cache
+ai-service/__pycache__/
+ai-service/*.pyc
+
+# ChromaDB
+chroma_data/
+
+# IDE
+.idea/
+.vscode/
+*.iml
