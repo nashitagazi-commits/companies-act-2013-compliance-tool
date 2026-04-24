@@ -2,14 +2,14 @@
 .env
 
 # Java build
-backend/target/
+target/
 
 # Node modules
-frontend/node_modules/
+node_modules/
 
 # Python cache
-ai-service/__pycache__/
-ai-service/*.pyc
+__pycache__/
+*.pyc
 
 # ChromaDB
 chroma_data/
