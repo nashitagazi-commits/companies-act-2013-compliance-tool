@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #1B4F8A;
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+        .body {
+            padding: 24px;
+            color: #333333;
+        }
+        .alert-box {
+            background-color: #FFF3CD;
+            border-left: 4px solid #FFC107;
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+        .record-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        .record-table th {
+            background-color: #1B4F8A;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        .record-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eeeeee;
+        }
+        .record-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .footer {
+            background-color: #f4f4f4;
+            padding: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #888888;
+        }
+        .badge-high { color: #dc3545; font-weight: bold; }
+        .badge-medium { color: #fd7e14; font-weight: bold; }
+        .badge-low { color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>⚠️ Compliance Deadline Alert</h1>
+        <p th:text="'Companies Act 2013 Compliance Tool'"></p>
+    </div>
+    <div class="body">
+        <p>Dear Team,</p>
+        <div class="alert-box">
+            <strong>Action Required!</strong> The following compliance
+            records are due within
+            <span th:text="${days}"></span> days.
+        </div>
+
+        <table class="record-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Company</th>
+                    <th>Due Date</th>
+                    <th>Priority</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="record : ${records}">
+                    <td th:text="${record.title}"></td>
+                    <td th:text="${record.companyName}"></td>
+                    <td th:text="${record.dueDate}"></td>
+                    <td>
+                        <span th:class="${'badge-' + record.priority.name().toLowerCase()}"
+                              th:text="${record.priority}"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top: 24px;">
+            Please take immediate action to ensure compliance.
+        </p>
+        <p>Regards,<br/><strong>Compliance Tool Team</strong></p>
+    </div>
+    <div class="footer">
+        This is an automated alert from Companies Act 2013 Compliance Tool.
+        Please do not reply to this email.
+    </div>
+</div>
+</body>
+</html>

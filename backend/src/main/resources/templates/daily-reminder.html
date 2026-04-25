@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #1B4F8A;
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+        .body {
+            padding: 24px;
+            color: #333333;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            border-top: 4px solid #1B4F8A;
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1B4F8A;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666666;
+            margin-top: 4px;
+        }
+        .overdue-card {
+            border-top-color: #dc3545;
+        }
+        .overdue-card .stat-number {
+            color: #dc3545;
+        }
+        .pending-card {
+            border-top-color: #FFC107;
+        }
+        .pending-card .stat-number {
+            color: #FFC107;
+        }
+        .completed-card {
+            border-top-color: #28a745;
+        }
+        .completed-card .stat-number {
+            color: #28a745;
+        }
+        .footer {
+            background-color: #f4f4f4;
+            padding: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 Daily Compliance Summary</h1>
+        <p th:text="${today}"></p>
+    </div>
+    <div class="body">
+        <p>Dear Team,</p>
+        <p>Here is your daily compliance summary for today:</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${stats.total}">0</div>
+                <div class="stat-label">Total Records</div>
+            </div>
+            <div class="stat-card pending-card">
+                <div class="stat-number" th:text="${stats.pending}">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card overdue-card">
+                <div class="stat-number" th:text="${stats.overdue}">0</div>
+                <div class="stat-label">Overdue</div>
+            </div>
+            <div class="stat-card completed-card">
+                <div class="stat-number" th:text="${stats.completed}">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <p>Please review and take necessary action on pending
+        and overdue compliance items.</p>
+
+        <p>Regards,<br/>
+        <strong>Compliance Tool Team</strong></p>
+    </div>
+    <div class="footer">
+        This is an automated daily summary from
+        Companies Act 2013 Compliance Tool.
+        Please do not reply to this email.
+    </div>
+</div>
+</body>
+</html>
