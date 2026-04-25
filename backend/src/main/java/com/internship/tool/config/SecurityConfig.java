@@ -1,9 +1,9 @@
 package com.internship.tool.config;
 
 import com.internship.tool.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -23,13 +23,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UserRepository userRepository;
     private final JwtAuthFilter jwtAuthFilter;
 
-    // Load user by email
+    public SecurityConfig(UserRepository userRepository,
+                          @Lazy JwtAuthFilter jwtAuthFilter) {
+        this.userRepository = userRepository;
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
@@ -42,13 +46,11 @@ public class SecurityConfig {
                         "User not found: " + username));
     }
 
-    // Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Authentication provider
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -57,21 +59,18 @@ public class SecurityConfig {
         return provider;
     }
 
-    // Authentication manager
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // Security filter chain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
                 .requestMatchers(
                     "/api/auth/**",
                     "/swagger-ui/**",
@@ -79,7 +78,6 @@ public class SecurityConfig {
                     "/api-docs/**",
                     "/actuator/health"
                 ).permitAll()
-                // All other endpoints need authentication
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
