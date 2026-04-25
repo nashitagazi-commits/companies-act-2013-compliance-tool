@@ -1,11 +1,15 @@
 package com.internship.tool.service;
 
+import com.internship.tool.config.RedisConfig;
 import com.internship.tool.entity.ComplianceRecord;
 import com.internship.tool.exception.ResourceNotFoundException;
 import com.internship.tool.exception.ValidationException;
 import com.internship.tool.repository.ComplianceRecordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,10 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     private final ComplianceRecordRepository repository;
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = RedisConfig.COMPLIANCE_RECORDS_CACHE, allEntries = true),
+        @CacheEvict(value = RedisConfig.COMPLIANCE_STATS_CACHE, allEntries = true)
+    })
     public ComplianceRecord createRecord(ComplianceRecord record) {
         log.info("Creating compliance record: {}", record.getTitle());
         validateRecord(record);
@@ -40,6 +48,7 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = RedisConfig.COMPLIANCE_RECORD_CACHE, key = "#id")
     public ComplianceRecord getRecordById(Long id) {
         log.info("Fetching compliance record with id: {}", id);
         return repository.findByIdAndIsDeletedFalse(id)
@@ -49,6 +58,8 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = RedisConfig.COMPLIANCE_RECORDS_CACHE,
+               key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<ComplianceRecord> getAllRecords(Pageable pageable) {
         log.info("Fetching all compliance records");
         return repository.findByIsDeletedFalse(pageable);
@@ -97,6 +108,11 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = RedisConfig.COMPLIANCE_RECORD_CACHE, key = "#id"),
+        @CacheEvict(value = RedisConfig.COMPLIANCE_RECORDS_CACHE, allEntries = true),
+        @CacheEvict(value = RedisConfig.COMPLIANCE_STATS_CACHE, allEntries = true)
+    })
     public ComplianceRecord updateRecord(Long id, ComplianceRecord updatedRecord) {
         log.info("Updating compliance record with id: {}", id);
         ComplianceRecord existing = getRecordById(id);
@@ -117,7 +133,13 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     }
 
     @Override
-    public ComplianceRecord updateStatus(Long id, ComplianceRecord.ComplianceStatus status) {
+    @Caching(evict = {
+        @CacheEvict(value = RedisConfig.COMPLIANCE_RECORD_CACHE, key = "#id"),
+        @CacheEvict(value = RedisConfig.COMPLIANCE_RECORDS_CACHE, allEntries = true),
+        @CacheEvict(value = RedisConfig.COMPLIANCE_STATS_CACHE, allEntries = true)
+    })
+    public ComplianceRecord updateStatus(Long id,
+            ComplianceRecord.ComplianceStatus status) {
         log.info("Updating status of record {} to {}", id, status);
         ComplianceRecord existing = getRecordById(id);
         existing.setStatus(status);
@@ -125,6 +147,11 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = RedisConfig.COMPLIANCE_RECORD_CACHE, key = "#id"),
+        @CacheEvict(value = RedisConfig.COMPLIANCE_RECORDS_CACHE, allEntries = true),
+        @CacheEvict(value = RedisConfig.COMPLIANCE_STATS_CACHE, allEntries = true)
+    })
     public void deleteRecord(Long id) {
         log.info("Soft deleting compliance record with id: {}", id);
         ComplianceRecord existing = getRecordById(id);
@@ -134,6 +161,7 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = RedisConfig.COMPLIANCE_STATS_CACHE, key = "'stats'")
     public Map<String, Long> getStats() {
         log.info("Fetching compliance stats");
         Map<String, Long> stats = new HashMap<>();
@@ -150,6 +178,7 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     }
 
     @Override
+    @CacheEvict(value = RedisConfig.COMPLIANCE_RECORD_CACHE, key = "#id")
     public ComplianceRecord attachAiDescription(Long id, String aiDescription) {
         log.info("Attaching AI description to record {}", id);
         ComplianceRecord existing = getRecordById(id);
@@ -158,7 +187,9 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     }
 
     @Override
-    public ComplianceRecord attachAiRecommendations(Long id, String aiRecommendations) {
+    @CacheEvict(value = RedisConfig.COMPLIANCE_RECORD_CACHE, key = "#id")
+    public ComplianceRecord attachAiRecommendations(Long id,
+            String aiRecommendations) {
         log.info("Attaching AI recommendations to record {}", id);
         ComplianceRecord existing = getRecordById(id);
         existing.setAiRecommendations(aiRecommendations);
@@ -168,14 +199,15 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     // --- Private validation ---
     private void validateRecord(ComplianceRecord record) {
         Map<String, String> errors = new HashMap<>();
-
         if (record.getTitle() == null || record.getTitle().trim().isEmpty()) {
             errors.put("title", "Title is required");
         }
-        if (record.getCompanyName() == null || record.getCompanyName().trim().isEmpty()) {
+        if (record.getCompanyName() == null ||
+                record.getCompanyName().trim().isEmpty()) {
             errors.put("companyName", "Company name is required");
         }
-        if (record.getComplianceType() == null || record.getComplianceType().trim().isEmpty()) {
+        if (record.getComplianceType() == null ||
+                record.getComplianceType().trim().isEmpty()) {
             errors.put("complianceType", "Compliance type is required");
         }
         if (!errors.isEmpty()) {
