@@ -56,11 +56,9 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
                         "ComplianceRecord", "id", id));
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    @Cacheable(value = RedisConfig.COMPLIANCE_RECORDS_CACHE,
-               key = "#pageable.pageNumber + '-' + #pageable.pageSize")
-    public Page<ComplianceRecord> getAllRecords(Pageable pageable) {
+   @Override
+@Transactional(readOnly = true)
+public Page<ComplianceRecord> getAllRecords(Pageable pageable) {
         log.info("Fetching all compliance records");
         return repository.findByIsDeletedFalse(pageable);
     }
