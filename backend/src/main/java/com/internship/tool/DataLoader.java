@@ -33,296 +33,168 @@ public class DataLoader implements CommandLineRunner {
             log.info("Users already seeded — skipping");
             return;
         }
-        log.info("Seeding users...");
         userRepository.saveAll(List.of(
-            User.builder()
-                .fullName("Admin User")
+            User.builder().fullName("Admin User")
                 .email("admin@company.com")
                 .password(passwordEncoder.encode("admin123"))
-                .role(User.Role.ADMIN)
-                .isActive(true)
-                .build(),
-            User.builder()
-                .fullName("Manager User")
+                .role(User.Role.ADMIN).isActive(true).build(),
+            User.builder().fullName("Manager User")
                 .email("manager@company.com")
                 .password(passwordEncoder.encode("manager123"))
-                .role(User.Role.MANAGER)
-                .isActive(true)
-                .build(),
-            User.builder()
-                .fullName("Regular User")
+                .role(User.Role.MANAGER).isActive(true).build(),
+            User.builder().fullName("Regular User")
                 .email("user@company.com")
                 .password(passwordEncoder.encode("user123"))
-                .role(User.Role.USER)
-                .isActive(true)
-                .build()
+                .role(User.Role.USER).isActive(true).build()
         ));
         log.info("✅ Seeded 3 users");
     }
 
     private void seedComplianceRecords() {
         if (complianceRecordRepository.count() > 0) {
-            log.info("Compliance records already seeded — skipping");
+            log.info("Records already seeded — skipping");
             return;
         }
-        log.info("Seeding compliance records...");
         complianceRecordRepository.saveAll(List.of(
-
-            // 1
-            ComplianceRecord.builder()
-                .title("Annual Return Filing - MGT-7")
-                .description("Filing of Annual Return with Registrar of Companies")
-                .sectionNumber("Section 92")
-                .complianceType("Annual Filing")
-                .status(ComplianceRecord.ComplianceStatus.PENDING)
-                .priority(ComplianceRecord.Priority.HIGH)
-                .dueDate(LocalDate.now().plusDays(15))
-                .assignedTo("manager@company.com")
-                .companyName("Tata Consultancy Services Ltd")
-                .filingFrequency("Annual")
-                .penaltyAmount(50000.0)
-                .remarks("Due within 60 days of AGM")
-                .isDeleted(false)
-                .build(),
-
-            // 2
-            ComplianceRecord.builder()
-                .title("Financial Statements Filing - AOC-4")
-                .description("Filing of Financial Statements with ROC")
-                .sectionNumber("Section 137")
-                .complianceType("Annual Filing")
-                .status(ComplianceRecord.ComplianceStatus.IN_PROGRESS)
-                .priority(ComplianceRecord.Priority.HIGH)
-                .dueDate(LocalDate.now().plusDays(30))
-                .assignedTo("manager@company.com")
-                .companyName("Infosys Limited")
-                .filingFrequency("Annual")
-                .penaltyAmount(100000.0)
-                .remarks("Audited financials required")
-                .isDeleted(false)
-                .build(),
-
-            // 3
-            ComplianceRecord.builder()
-                .title("Board Meeting - Q1")
-                .description("Mandatory Board Meeting for Q1 review")
-                .sectionNumber("Section 173")
-                .complianceType("Board Meeting")
-                .status(ComplianceRecord.ComplianceStatus.COMPLETED)
-                .priority(ComplianceRecord.Priority.MEDIUM)
-                .dueDate(LocalDate.now().minusDays(10))
-                .assignedTo("admin@company.com")
-                .companyName("Wipro Limited")
-                .filingFrequency("Quarterly")
-                .penaltyAmount(25000.0)
-                .remarks("Minutes recorded and filed")
-                .isDeleted(false)
-                .build(),
-
-            // 4
-            ComplianceRecord.builder()
-                .title("Director KYC - DIR-3 KYC")
-                .description("Annual KYC for all Directors")
-                .sectionNumber("Rule 12A")
-                .complianceType("Director Compliance")
-                .status(ComplianceRecord.ComplianceStatus.OVERDUE)
-                .priority(ComplianceRecord.Priority.CRITICAL)
-                .dueDate(LocalDate.now().minusDays(5))
-                .assignedTo("user@company.com")
-                .companyName("HCL Technologies Ltd")
-                .filingFrequency("Annual")
-                .penaltyAmount(5000.0)
-                .remarks("DIN deactivation risk")
-                .isDeleted(false)
-                .build(),
-
-            // 5
-            ComplianceRecord.builder()
-                .title("Statutory Audit Completion")
-                .description("Completion of Statutory Audit for FY 2025-26")
-                .sectionNumber("Section 139")
-                .complianceType("Audit")
-                .status(ComplianceRecord.ComplianceStatus.IN_PROGRESS)
-                .priority(ComplianceRecord.Priority.HIGH)
-                .dueDate(LocalDate.now().plusDays(45))
-                .assignedTo("manager@company.com")
-                .companyName("Tech Mahindra Limited")
-                .filingFrequency("Annual")
-                .penaltyAmount(150000.0)
-                .remarks("Auditor appointed — fieldwork in progress")
-                .isDeleted(false)
-                .build(),
-
-            // 6
-            ComplianceRecord.builder()
-                .title("AGM Notice Dispatch")
-                .description("Dispatch of AGM notice to all shareholders")
-                .sectionNumber("Section 101")
-                .complianceType("Shareholder Meeting")
-                .status(ComplianceRecord.ComplianceStatus.PENDING)
-                .priority(ComplianceRecord.Priority.HIGH)
-                .dueDate(LocalDate.now().plusDays(7))
-                .assignedTo("admin@company.com")
-                .companyName("Tata Consultancy Services Ltd")
-                .filingFrequency("Annual")
-                .penaltyAmount(10000.0)
-                .remarks("21 days notice required")
-                .isDeleted(false)
-                .build(),
-
-            // 7
-            ComplianceRecord.builder()
-                .title("CSR Report Filing")
-                .description("Corporate Social Responsibility Report")
-                .sectionNumber("Section 135")
-                .complianceType("CSR Compliance")
-                .status(ComplianceRecord.ComplianceStatus.COMPLETED)
-                .priority(ComplianceRecord.Priority.MEDIUM)
-                .dueDate(LocalDate.now().minusDays(20))
-                .assignedTo("manager@company.com")
-                .companyName("Infosys Limited")
-                .filingFrequency("Annual")
-                .penaltyAmount(0.0)
-                .remarks("2% of average net profit")
-                .isDeleted(false)
-                .build(),
-
-            // 8
-            ComplianceRecord.builder()
-                .title("Secretarial Audit - MR-3")
-                .description("Secretarial Audit by Company Secretary")
-                .sectionNumber("Section 204")
-                .complianceType("Audit")
-                .status(ComplianceRecord.ComplianceStatus.PENDING)
-                .priority(ComplianceRecord.Priority.MEDIUM)
-                .dueDate(LocalDate.now().plusDays(60))
-                .assignedTo("user@company.com")
-                .companyName("Wipro Limited")
-                .filingFrequency("Annual")
-                .penaltyAmount(200000.0)
-                .remarks("Required for listed companies")
-                .isDeleted(false)
-                .build(),
-
-            // 9
-            ComplianceRecord.builder()
-                .title("XBRL Filing")
-                .description("XBRL tagging and filing of financial statements")
-                .sectionNumber("MCA Circular")
-                .complianceType("Annual Filing")
-                .status(ComplianceRecord.ComplianceStatus.NOT_APPLICABLE)
-                .priority(ComplianceRecord.Priority.LOW)
-                .dueDate(LocalDate.now().plusDays(90))
-                .assignedTo("admin@company.com")
-                .companyName("HCL Technologies Ltd")
-                .filingFrequency("Annual")
-                .penaltyAmount(0.0)
-                .remarks("Not applicable for this FY")
-                .isDeleted(false)
-                .build(),
-
-            // 10
-            ComplianceRecord.builder()
-                .title("Register of Members Update")
-                .description("Update and maintenance of Register of Members")
-                .sectionNumber("Section 88")
-                .complianceType("Statutory Register")
-                .status(ComplianceRecord.ComplianceStatus.COMPLETED)
-                .priority(ComplianceRecord.Priority.LOW)
-                .dueDate(LocalDate.now().minusDays(30))
-                .assignedTo("user@company.com")
-                .companyName("Tech Mahindra Limited")
-                .filingFrequency("Continuous")
-                .penaltyAmount(0.0)
-                .remarks("Updated after share transfer")
-                .isDeleted(false)
-                .build(),
-
-            // 11
-            ComplianceRecord.builder()
-                .title("Dividend Declaration and Payment")
-                .description("Declaration of final dividend and payment to shareholders")
-                .sectionNumber("Section 123")
-                .complianceType("Dividend")
-                .status(ComplianceRecord.ComplianceStatus.PENDING)
-                .priority(ComplianceRecord.Priority.HIGH)
-                .dueDate(LocalDate.now().plusDays(20))
-                .assignedTo("manager@company.com")
-                .companyName("Tata Consultancy Services Ltd")
-                .filingFrequency("Annual")
-                .penaltyAmount(75000.0)
-                .remarks("Payment within 30 days of declaration")
-                .isDeleted(false)
-                .build(),
-
-            // 12
-            ComplianceRecord.builder()
-                .title("Charge Registration - CHG-1")
-                .description("Registration of charge created on company assets")
-                .sectionNumber("Section 77")
-                .complianceType("Charge")
-                .status(ComplianceRecord.ComplianceStatus.OVERDUE)
-                .priority(ComplianceRecord.Priority.CRITICAL)
-                .dueDate(LocalDate.now().minusDays(3))
-                .assignedTo("admin@company.com")
-                .companyName("Infosys Limited")
-                .filingFrequency("Event Based")
-                .penaltyAmount(300000.0)
-                .remarks("30 days from creation — URGENT")
-                .isDeleted(false)
-                .build(),
-
-            // 13
-            ComplianceRecord.builder()
-                .title("Board Resolution for Bank Account")
-                .description("Board resolution for opening new bank account")
-                .sectionNumber("Section 179")
-                .complianceType("Board Resolution")
-                .status(ComplianceRecord.ComplianceStatus.COMPLETED)
-                .priority(ComplianceRecord.Priority.LOW)
-                .dueDate(LocalDate.now().minusDays(45))
-                .assignedTo("user@company.com")
-                .companyName("Wipro Limited")
-                .filingFrequency("Event Based")
-                .penaltyAmount(0.0)
-                .remarks("Passed in last board meeting")
-                .isDeleted(false)
-                .build(),
-
-            // 14
-            ComplianceRecord.builder()
-                .title("Related Party Transaction Disclosure")
-                .description("Disclosure of related party transactions to Board")
-                .sectionNumber("Section 188")
-                .complianceType("Disclosure")
-                .status(ComplianceRecord.ComplianceStatus.IN_PROGRESS)
-                .priority(ComplianceRecord.Priority.MEDIUM)
-                .dueDate(LocalDate.now().plusDays(10))
-                .assignedTo("manager@company.com")
-                .companyName("HCL Technologies Ltd")
-                .filingFrequency("Quarterly")
-                .penaltyAmount(25000.0)
-                .remarks("Prior approval required for material transactions")
-                .isDeleted(false)
-                .build(),
-
-            // 15
-            ComplianceRecord.builder()
-                .title("Whistle Blower Policy Review")
-                .description("Annual review of Vigil Mechanism and Whistle Blower Policy")
-                .sectionNumber("Section 177")
-                .complianceType("Policy Review")
-                .status(ComplianceRecord.ComplianceStatus.PENDING)
-                .priority(ComplianceRecord.Priority.LOW)
-                .dueDate(LocalDate.now().plusDays(90))
-                .assignedTo("admin@company.com")
-                .companyName("Tech Mahindra Limited")
-                .filingFrequency("Annual")
-                .penaltyAmount(0.0)
-                .remarks("Review and update policy annually")
-                .isDeleted(false)
-                .build()
+            build("Annual Return Filing - MGT-7", "Section 92",
+                "Annual Filing", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.HIGH, 15,
+                "Tata Consultancy Services Ltd", 50000.0),
+            build("Financial Statements - AOC-4", "Section 137",
+                "Annual Filing", ComplianceRecord.ComplianceStatus.IN_PROGRESS,
+                ComplianceRecord.Priority.HIGH, 30,
+                "Infosys Limited", 100000.0),
+            build("Board Meeting Q1", "Section 173",
+                "Board Meeting", ComplianceRecord.ComplianceStatus.COMPLETED,
+                ComplianceRecord.Priority.MEDIUM, -10,
+                "Wipro Limited", 25000.0),
+            build("Director KYC - DIR-3", "Rule 12A",
+                "Director Compliance", ComplianceRecord.ComplianceStatus.OVERDUE,
+                ComplianceRecord.Priority.CRITICAL, -5,
+                "HCL Technologies Ltd", 5000.0),
+            build("Statutory Audit FY 2025-26", "Section 139",
+                "Audit", ComplianceRecord.ComplianceStatus.IN_PROGRESS,
+                ComplianceRecord.Priority.HIGH, 45,
+                "Tech Mahindra Limited", 150000.0),
+            build("AGM Notice Dispatch", "Section 101",
+                "Shareholder Meeting", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.HIGH, 7,
+                "Tata Consultancy Services Ltd", 10000.0),
+            build("CSR Report Filing", "Section 135",
+                "CSR Compliance", ComplianceRecord.ComplianceStatus.COMPLETED,
+                ComplianceRecord.Priority.MEDIUM, -20,
+                "Infosys Limited", 0.0),
+            build("Secretarial Audit - MR-3", "Section 204",
+                "Audit", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.MEDIUM, 60,
+                "Wipro Limited", 200000.0),
+            build("XBRL Filing", "MCA Circular",
+                "Annual Filing", ComplianceRecord.ComplianceStatus.NOT_APPLICABLE,
+                ComplianceRecord.Priority.LOW, 90,
+                "HCL Technologies Ltd", 0.0),
+            build("Register of Members Update", "Section 88",
+                "Statutory Register", ComplianceRecord.ComplianceStatus.COMPLETED,
+                ComplianceRecord.Priority.LOW, -30,
+                "Tech Mahindra Limited", 0.0),
+            build("Dividend Declaration", "Section 123",
+                "Dividend", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.HIGH, 20,
+                "Tata Consultancy Services Ltd", 75000.0),
+            build("Charge Registration - CHG-1", "Section 77",
+                "Charge", ComplianceRecord.ComplianceStatus.OVERDUE,
+                ComplianceRecord.Priority.CRITICAL, -3,
+                "Infosys Limited", 300000.0),
+            build("Board Resolution Bank Account", "Section 179",
+                "Board Resolution", ComplianceRecord.ComplianceStatus.COMPLETED,
+                ComplianceRecord.Priority.LOW, -45,
+                "Wipro Limited", 0.0),
+            build("Related Party Transaction", "Section 188",
+                "Disclosure", ComplianceRecord.ComplianceStatus.IN_PROGRESS,
+                ComplianceRecord.Priority.MEDIUM, 10,
+                "HCL Technologies Ltd", 25000.0),
+            build("Whistle Blower Policy Review", "Section 177",
+                "Policy Review", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.LOW, 90,
+                "Tech Mahindra Limited", 0.0),
+            build("Form INC-20A Filing", "Section 10A",
+                "Commencement Filing", ComplianceRecord.ComplianceStatus.COMPLETED,
+                ComplianceRecord.Priority.HIGH, -60,
+                "Reliance Industries Ltd", 50000.0),
+            build("Statutory Registers Maintenance", "Section 85",
+                "Statutory Register", ComplianceRecord.ComplianceStatus.IN_PROGRESS,
+                ComplianceRecord.Priority.MEDIUM, 5,
+                "Bajaj Auto Limited", 0.0),
+            build("Board Meeting Q2", "Section 173",
+                "Board Meeting", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.HIGH, 25,
+                "Maruti Suzuki India Ltd", 25000.0),
+            build("Annual General Meeting", "Section 96",
+                "Shareholder Meeting", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.HIGH, 35,
+                "Tata Motors Limited", 100000.0),
+            build("DPT-3 Return Filing", "Section 73",
+                "Deposit Return", ComplianceRecord.ComplianceStatus.OVERDUE,
+                ComplianceRecord.Priority.CRITICAL, -2,
+                "Larsen and Toubro Ltd", 500000.0),
+            build("MGT-14 Filing", "Section 94",
+                "Board Resolutions", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.MEDIUM, 12,
+                "Reliance Industries Ltd", 10000.0),
+            build("Auditor Appointment - ADT-1", "Section 139",
+                "Auditor", ComplianceRecord.ComplianceStatus.COMPLETED,
+                ComplianceRecord.Priority.HIGH, -90,
+                "Bajaj Auto Limited", 0.0),
+            build("MSME Payment Compliance", "MSMED Act",
+                "Payment Compliance", ComplianceRecord.ComplianceStatus.IN_PROGRESS,
+                ComplianceRecord.Priority.HIGH, 8,
+                "Maruti Suzuki India Ltd", 0.0),
+            build("PF and ESI Compliance", "Labour Laws",
+                "Labour Compliance", ComplianceRecord.ComplianceStatus.COMPLETED,
+                ComplianceRecord.Priority.HIGH, -5,
+                "Tata Motors Limited", 0.0),
+            build("GST Annual Return GSTR-9", "GST Act",
+                "Tax Compliance", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.HIGH, 40,
+                "Larsen and Toubro Ltd", 50000.0),
+            build("Income Tax Return Filing", "IT Act",
+                "Tax Compliance", ComplianceRecord.ComplianceStatus.IN_PROGRESS,
+                ComplianceRecord.Priority.HIGH, 50,
+                "Reliance Industries Ltd", 100000.0),
+            build("Transfer Pricing Report", "Section 92E",
+                "Tax Compliance", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.MEDIUM, 55,
+                "Bajaj Auto Limited", 25000.0),
+            build("Board Diversity Policy", "SEBI LODR",
+                "Policy Compliance", ComplianceRecord.ComplianceStatus.COMPLETED,
+                ComplianceRecord.Priority.LOW, -15,
+                "Maruti Suzuki India Ltd", 0.0),
+            build("Insider Trading Policy Update", "SEBI PIT",
+                "SEBI Compliance", ComplianceRecord.ComplianceStatus.PENDING,
+                ComplianceRecord.Priority.HIGH, 18,
+                "Tata Motors Limited", 0.0),
+            build("Risk Management Policy Review", "SEBI LODR",
+                "Policy Review", ComplianceRecord.ComplianceStatus.IN_PROGRESS,
+                ComplianceRecord.Priority.MEDIUM, 22,
+                "Larsen and Toubro Ltd", 0.0)
         ));
-        log.info("✅ Seeded 15 compliance records");
+        log.info("✅ Seeded 30 compliance records");
+    }
+
+    private ComplianceRecord build(String title, String section,
+            String type, ComplianceRecord.ComplianceStatus status,
+            ComplianceRecord.Priority priority, int dueDays,
+            String company, Double penalty) {
+        return ComplianceRecord.builder()
+                .title(title)
+                .sectionNumber(section)
+                .complianceType(type)
+                .status(status)
+                .priority(priority)
+                .dueDate(LocalDate.now().plusDays(dueDays))
+                .companyName(company)
+                .penaltyAmount(penalty)
+                .assignedTo("manager@company.com")
+                .isDeleted(false)
+                .build();
     }
 }

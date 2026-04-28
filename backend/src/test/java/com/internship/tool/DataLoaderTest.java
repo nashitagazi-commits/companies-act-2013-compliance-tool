@@ -1,7 +1,5 @@
 package com.internship.tool;
 
-import com.internship.tool.entity.ComplianceRecord;
-import com.internship.tool.entity.User;
 import com.internship.tool.repository.ComplianceRecordRepository;
 import com.internship.tool.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -33,7 +30,7 @@ class DataLoaderTest {
     @InjectMocks
     private DataLoader dataLoader;
 
-    // Test 1 — Seeds users when DB is empty
+    // Test 1 — Seeds users and records when DB is empty
     @Test
     void testRun_SeedsUsers_WhenEmpty() throws Exception {
         when(userRepository.count()).thenReturn(0L);
@@ -48,11 +45,11 @@ class DataLoaderTest {
         verify(complianceRecordRepository, times(1)).saveAll(anyList());
     }
 
-    // Test 2 — Skips seeding users when already exist
+    // Test 2 — Skips seeding when already seeded
     @Test
     void testRun_SkipsUsers_WhenAlreadySeeded() throws Exception {
         when(userRepository.count()).thenReturn(3L);
-        when(complianceRecordRepository.count()).thenReturn(15L);
+        when(complianceRecordRepository.count()).thenReturn(30L);
 
         dataLoader.run();
 
@@ -73,7 +70,7 @@ class DataLoaderTest {
         verify(complianceRecordRepository, times(1)).saveAll(anyList());
     }
 
-    // Test 4 — Password encoder called for each user
+    // Test 4 — Password encoder called 3 times for 3 users
     @Test
     void testRun_PasswordEncoder_CalledForEachUser() throws Exception {
         when(userRepository.count()).thenReturn(0L);
@@ -84,13 +81,12 @@ class DataLoaderTest {
 
         dataLoader.run();
 
-        // 3 users seeded = encode called 3 times
         verify(passwordEncoder, times(3)).encode(anyString());
     }
 
-    // Test 5 — Seeds exactly 15 compliance records
+    // Test 5 — Seeds exactly 30 compliance records
     @Test
-    void testRun_Seeds15ComplianceRecords() throws Exception {
+    void testRun_Seeds30ComplianceRecords() throws Exception {
         when(userRepository.count()).thenReturn(0L);
         when(complianceRecordRepository.count()).thenReturn(0L);
         when(passwordEncoder.encode(anyString())).thenReturn("encoded");
@@ -106,6 +102,6 @@ class DataLoaderTest {
 
         verify(complianceRecordRepository, times(1)).saveAll(anyList());
         assert capturedList[0] != null;
-        assert ((List<?>) capturedList[0]).size() == 15;
+        assert ((List<?>) capturedList[0]).size() == 30;
     }
 }
