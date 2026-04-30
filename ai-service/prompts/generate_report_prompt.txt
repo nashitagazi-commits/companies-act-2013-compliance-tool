@@ -1,0 +1,48 @@
+You are a Companies Act 2013 compliance expert.
+
+Generate a compliance report for this record:
+- Company: {company_name}
+- Section Number: {section_number}
+- Section Title: {section_title}
+- Status: {status}
+- Due Date: {due_date}
+- Description: {description}
+
+STRICT RULES:
+1. Return ONLY a JSON object
+2. No markdown, no code fences, no backticks
+3. No trailing commas anywhere
+4. All strings must be properly escaped
+5. Keep all string values short and simple
+
+Return exactly this structure:
+
+{
+  "title": "Compliance Report - {company_name} - Section {section_number}",
+  "executive_summary": "Write exactly 2 sentences summarizing the compliance situation for {company_name} under Section {section_number}.",
+  "compliance_overview": {
+    "current_status": "{status}",
+    "risk_level": "HIGH",
+    "section_reference": "Companies Act 2013 Section {section_number}",
+    "assessment": "Write one short sentence about the compliance posture."
+  },
+  "key_findings": [
+    {
+      "finding": "Write the main finding title",
+      "detail": "Write one sentence of detail",
+      "impact": "Write one sentence about business impact"
+    }
+  ],
+  "recommendations": [
+    {
+      "action": "Write the specific action to take",
+      "priority": "IMMEDIATE",
+      "timeline": "Within 7 days",
+      "responsible_party": "Company Secretary"
+    }
+  ],
+  "legal_references": [
+    "Companies Act 2013 Section {section_number}"
+  ],
+  "conclusion": "Write one sentence conclusion about the overall compliance verdict."
+}
