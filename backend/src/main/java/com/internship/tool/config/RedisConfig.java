@@ -1,6 +1,8 @@
 package com.internship.tool.config;
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -21,13 +23,19 @@ import java.util.Map;
 @EnableCaching
 public class RedisConfig {
 
-    // Default TTL — 10 minutes
     private static final Duration DEFAULT_TTL = Duration.ofMinutes(10);
 
-    // Cache names
     public static final String COMPLIANCE_RECORDS_CACHE = "complianceRecords";
-    public static final String COMPLIANCE_RECORD_CACHE = "complianceRecord";
-    public static final String COMPLIANCE_STATS_CACHE = "complianceStats";
+    public static final String COMPLIANCE_RECORD_CACHE  = "complianceRecord";
+    public static final String COMPLIANCE_STATS_CACHE   = "complianceStats";
+
+    // Shared ObjectMapper with JavaTimeModule for Redis serialization
+    private GenericJackson2JsonRedisSerializer redisSerializer() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return new GenericJackson2JsonRedisSerializer(mapper);
+    }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(
@@ -35,19 +43,16 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(redisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(
-                new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(redisSerializer());
         template.afterPropertiesSet();
         return template;
     }
 
     @Bean
-    public CacheManager cacheManager(
-            RedisConnectionFactory connectionFactory) {
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
-        // Default cache config — 10 min TTL
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration
                 .defaultCacheConfig()
                 .entryTtl(DEFAULT_TTL)
@@ -56,22 +61,14 @@ public class RedisConfig {
                                 .fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair
-                                .fromSerializer(
-                                        new GenericJackson2JsonRedisSerializer()))
+                                .fromSerializer(redisSerializer()))
                 .disableCachingNullValues();
 
-        // Custom TTL per cache
         Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
-
-        // Records list — 10 min
         cacheConfigs.put(COMPLIANCE_RECORDS_CACHE,
                 defaultConfig.entryTtl(Duration.ofMinutes(10)));
-
-        // Single record — 10 min
         cacheConfigs.put(COMPLIANCE_RECORD_CACHE,
                 defaultConfig.entryTtl(Duration.ofMinutes(10)));
-
-        // Stats — 5 min (changes more frequently)
         cacheConfigs.put(COMPLIANCE_STATS_CACHE,
                 defaultConfig.entryTtl(Duration.ofMinutes(5)));
 

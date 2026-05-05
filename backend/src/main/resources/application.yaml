@@ -2,6 +2,13 @@ spring:
   application:
     name: companies-act-compliance-tool
 
+  # --- Jackson (fixes LocalDate serialization) ---
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
   # --- Database ---
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:compliancedb}
@@ -77,6 +84,9 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+  health:
+    mail:
+      enabled: false
 
 # --- Logging ---
 logging:

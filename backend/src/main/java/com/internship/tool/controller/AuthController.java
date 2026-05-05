@@ -30,7 +30,7 @@ import java.util.Map;
 @Slf4j
 @Tag(name = "Authentication", description = "Login, Register and Token APIs")
 public class AuthController {
-
+    
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final UserDetailsService userDetailsService;

@@ -1,8 +1,5 @@
-
-
 services:
 
-  # --- PostgreSQL Database ---
   postgres:
     image: postgres:15-alpine
     container_name: compliance-postgres
@@ -22,7 +19,6 @@ services:
     networks:
       - compliance-network
 
-  # --- Redis Cache ---
   redis:
     image: redis:7-alpine
     container_name: compliance-redis
@@ -38,7 +34,6 @@ services:
     networks:
       - compliance-network
 
-  # --- Spring Boot Backend ---
   backend:
     build:
       context: ./backend
@@ -78,43 +73,27 @@ services:
     networks:
       - compliance-network
 
-  # --- Flask AI Service (uncomment when AI developer pushes code) ---
-  # ai-service:
-  #   build:
-  #     context: ./ai-service
-  #     dockerfile: Dockerfile
-  #   container_name: compliance-ai
-  #   ports:
-  #     - "5000:5000"
-  #   environment:
-  #     GROQ_API_KEY: ${GROQ_API_KEY:-your_groq_key_here}
-  #     REDIS_HOST: redis
-  #     REDIS_PORT: 6379
-  #   depends_on:
-  #     redis:
-  #       condition: service_healthy
-  #   networks:
-  #     - compliance-network
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: compliance-ai
+    ports:
+      - "5000:5000"
+    environment:
+      GROQ_API_KEY: ${GROQ_API_KEY:-your_groq_key_here}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - compliance-network
 
-  # --- React Frontend (uncomment when frontend developer pushes code) ---
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: compliance-frontend
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - compliance-network
-
-# --- Volumes ---
 volumes:
   postgres_data:
   redis_data:
 
-# --- Networks ---
 networks:
   compliance-network:
     driver: bridge

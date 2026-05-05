@@ -1,5 +1,5 @@
 package com.internship.tool.entity;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ComplianceRecord {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,6 +43,7 @@ public class ComplianceRecord {
     @Column(name = "priority", nullable = false, length = 10)
     private Priority priority;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "due_date")
     private LocalDate dueDate;
 
@@ -73,10 +72,12 @@ public class ComplianceRecord {
     @Builder.Default
     private Boolean isDeleted = false;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
