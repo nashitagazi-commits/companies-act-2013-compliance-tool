@@ -1,4 +1,4 @@
-package com.compliance.config;
+package com.internship.tool.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
